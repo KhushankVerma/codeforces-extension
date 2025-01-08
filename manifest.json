@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Codeforces Friends Ratings",
+  "version": "1.0",
+  "description": "Displays Codeforces ratings of your friends.",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["https://codeforces.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "32": "./assets/icon-32.png",
+      "48": "./assets/icon-48.png"
+    }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["env.js"],
+      "type": "module"
+    }
+  ]
+}
