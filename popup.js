@@ -1,6 +1,4 @@
-import { ENV } from './env.js';
-
-
+import { ENV } from "./env.js";
 
 const CONFIG = {
   API_BASE_URL: "https://codeforces.com/api",
@@ -8,26 +6,43 @@ const CONFIG = {
   API_SECRET: ENV.API_SECRET,
 };
 
+function getPinnedHandles() {
+  const pinned = localStorage.getItem("pinnedHandles");
+  return pinned ? JSON.parse(pinned) : [];
+}
 
+function savePinnedHandles(handles) {
+  localStorage.setItem("pinnedHandles", JSON.stringify(handles));
+}
 
-
-
-async function getMe(){
-
-  const myratings = await fetchRatings(ENV.MyHandles);
-  
-  const heading = document.getElementById("header");
-  
-  myratings.forEach((user) => {
-      const elementme = document.createElement("div")
-      elementme.innerHTML = `<h2 class=${getRatingClass(user.rating)}>${user.handle} | ${user.rating || "Unrated"}</h2>`
-      // console.log(user.handle, user.rating)
-      heading.appendChild(elementme)
-    })
+// Add or remove a pin
+function togglePin(handle) {
+  const pinnedHandles = getPinnedHandles();
+  if (pinnedHandles.includes(handle)) {
+    // Remove if already pinned
+    const index = pinnedHandles.indexOf(handle);
+    pinnedHandles.splice(index, 1);
+  } else {
+    // Add if not pinned
+    pinnedHandles.push(handle);
   }
+  savePinnedHandles(pinnedHandles);
+}
 
+async function getMe() {
+  const myratings = await fetchRatings(ENV.MyHandles);
 
-
+  const heading = document.getElementById("header");
+  heading.innerHTML = "";
+  myratings.forEach((user) => {
+    const elementme = document.createElement("div");
+    elementme.innerHTML = `<h2 class=${getRatingClass(user.rating)}>${
+      user.handle
+    } | ${user.rating || "Unrated"}</h2>`;
+    // console.log(user.handle, user.rating)
+    heading.appendChild(elementme);
+  });
+}
 
 async function computeSHA512(input) {
   // Encode the input string as a Uint8Array
@@ -109,25 +124,63 @@ async function displayRatings() {
   getMe();
   const ratingsContainer = document.getElementById("ratings-container");
   ratingsContainer.innerHTML = "<p>Loading...</p>";
+
   const friends = await fetchFriends();
-  // const friends = ["tourist"]
   const ratings = await fetchRatings(friends);
+
   if (ratings.length === 0) {
-    ratingsContainer.innerHTML = `<p>Failed to load ratings. Please try again later. ${friends}</p>`;
-    console.log("abc");
-    console.log(friends);
+    const element = document.createElement("button");
+    element.innerText = "No friends found. Click to refresh.";
+    element.addEventListener("click", displayRatings);
+    ratingsContainer.innerHTML = "";
+    ratingsContainer.appendChild(element);
     return;
   }
 
   ratingsContainer.innerHTML = "";
-  ratings.forEach((user) => {
+
+  const pinnedHandles = getPinnedHandles();
+  const pinnedRatings = ratings.filter((user) =>
+    pinnedHandles.includes(user.handle)
+  );
+  const unpinnedRatings = ratings.filter(
+    (user) => !pinnedHandles.includes(user.handle)
+  );
+
+  pinnedRatings.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  unpinnedRatings.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  const allRatings = [...pinnedRatings, ...unpinnedRatings];
+
+  allRatings.forEach((user) => {
     const userElement = document.createElement("div");
     userElement.className = "user";
+
     const ratingClass = getRatingClass(user.rating);
+    const isPinned = pinnedHandles.includes(user.handle);
     userElement.innerHTML = `
-      <strong class="${ratingClass}">${user.handle} | ${user.rating || "Unrated"}</strong> 
+      <strong class="${ratingClass}">${user.handle} | ${
+      user.rating || "Unrated"
+    }</strong>
+      <button class="pin-btn" data-handle="${user.handle}">
+        ${isPinned ? "Unpin" : "Pin"}
+      </button>
     `;
     ratingsContainer.appendChild(userElement);
+  });
+
+  // Add event listeners for pin buttons
+  document.querySelectorAll(".pin-btn").forEach((btn) => {
+    btn.addEventListener("click", (event) => {
+      const handle = event.target.getAttribute("data-handle");
+      togglePin(handle);
+
+      const pinnedHandles = getPinnedHandles();
+      if (pinnedHandles.includes(handle)) {
+        btn.innerText = "Unpin";
+      } else {
+        btn.innerText = "Pin";
+      }
+    });
   });
 }
 

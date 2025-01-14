@@ -1,69 +1,69 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 10px;
-    background-color: #f9f9f9;
-  }
-  
-  h1 {
-    font-size: 20px;
-    text-align: center;
-    width: 200px;
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
 
-  h2{
-    font-size: 13px;
-    font-family:Helvetica;
-  }
+h1 {
+  font-size: 20px;
+  text-align: center;
+  width: 200px;
+}
 
+.pin-btn {
+  margin: 0 20px;
+  cursor: pointer;
+}
 
- #ratings-container{
+h2 {
+  font-size: 13px;
+  font-family: Helvetica;
+}
+
+#ratings-container {
   /* height: 300px; */
   max-height: 300px;
-  width: 200px;
+  width: 250px;
   overflow: scroll;
   scrollbar-width: thin;
-  overflow-x: hidden
- }
+  overflow-x: hidden;
+}
 
+.user {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+  width: 250px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 12px;
+}
 
+.legendary-grandmaster {
+  color: red;
+}
 
-  .user {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid #ccc;
-    width: 200px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 12px;
-  }
-  
-  .legendary-grandmaster {
-    color: red;
-  }
-  
-  .grandmaster {
-    color: orange;
-  }
-  
-  .master {
-    color: purple;
-  }
-  
-  .expert {
-    color: blue;
-  }
-  
-  .specialist {
-    color: teal;
-  }
-  
-  .pupil {
-    color: green;
-  }
-  
-  .newbie {
-    color: gray;
-  }
-  
+.grandmaster {
+  color: orange;
+}
+
+.master {
+  color: purple;
+}
+
+.expert {
+  color: blue;
+}
+
+.specialist {
+  color: teal;
+}
+
+.pupil {
+  color: green;
+}
+
+.newbie {
+  color: gray;
+}
